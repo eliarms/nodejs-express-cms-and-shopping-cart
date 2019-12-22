@@ -3,20 +3,25 @@ var router = express.Router();
 //var Page = require("../models/page");
 var { Page } = require("../models/page");
 /*
-* GET pages index
-*/
+ * GET pages index
+ */
 router.get("/", (req, res) => {
-  res.render("admin/index", {
-    title: "Welcome Admin"
-  });
+  Page.find({})
+    .sort({ sorting: 1 })
+    .exec(function(err, pages) {
+      res.render("admin/pages", {
+        title: "Welcome Admin",
+        pages: pages
+      });
+    });
 });
 
 /*
-* GET add page
-*/
+ * GET add page
+ */
 
 router.get("/add-page", (req, res) => {
-  var title = "Add a page";
+  var title = "";
   var slug = "";
   var content = "";
   res.render("admin/add_page", {
@@ -27,8 +32,8 @@ router.get("/add-page", (req, res) => {
 });
 
 /*
-* GET post page
-*/
+ * GET post page
+ */
 
 router.post("/add-page", (req, res) => {
   req.checkBody("title", "Title must have a value").notEmpty();

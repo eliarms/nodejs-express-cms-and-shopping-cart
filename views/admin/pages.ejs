@@ -1,0 +1,45 @@
+<% include adminheader %> <% include navadmin %>
+
+<body>
+  <main role="main" class="container">
+    <div class="starter-template">
+      <h1>Page List</h1>
+      <table class="table table-stripped">
+        <thead>
+          <tr>
+            Title
+          </tr>
+          <tr>
+            Edit
+          </tr>
+          <tr>
+            Delete
+          </tr>
+        </thead>
+        <tbody>
+          <% pages.forEach(function (page){ %>
+          <tr>
+            <td>
+              <%= page.title %>
+            </td>
+            <td>
+              <a href="/admin/pages/edit-pages/<%= page.slug %>">Edit</a>
+            </td>
+            <% if (page.slug == "home") { %>
+            <td></td>
+            <% } else { %>
+            <td>
+              <a href="/admin/pages/delete-page/<%= page._id %>"
+                >Delete<a
+              >
+            </td>
+            <% } %>
+          </tr>
+          <%});%>
+        </tbody>
+      </table>
+    </div>
+  </main>
+  <!-- /.container -->
+</body>
+<% include adminfooter %>
