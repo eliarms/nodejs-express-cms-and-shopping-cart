@@ -66,12 +66,63 @@ router.post("/add-page", (req, res) => {
           title: title,
           slug: slug,
           content: content,
-          sorting: 0
+          sorting: 100
         });
         page.save(function(err) {
           if (err) return console.log(err);
           req.flash("success", "Page added!");
           res.redirect("/admin/pages");
+        });
+      }
+    });
+  }
+});
+
+/*
+ * POST Edit page
+ */
+
+router.post("/edit-page/:slug", (req, res) => {
+  req.checkBody("title", "Title must have a value").notEmpty();
+  req.checkBody("content", "Content must have a value").notEmpty();
+  var title = req.body.title;
+  var content = req.body.content;
+  var id = req.body.id;
+  var slug = req.body.slug.replace(/\s+/g, "-").toLowerCase();
+  if (slug == "") slug = title.replace(/\s+/g, "-").toLowerCase();
+
+  var errors = req.validationErrors();
+  if (errors) {
+    //console.log("errors");
+    res.render("admin/edit_page", {
+      errors: errors,
+      title: title,
+      slug: slug,
+      content: content,
+      id: id
+    });
+  } else {
+    Page.findOne({ slug: slug, _id: { $ne: id } }, function(err, page) {
+      if (page) {
+        req.flash("danger", "Page slug exists, choose another");
+        res.render("admin/edit_page", {
+          title: title,
+          slug: slug,
+          content: content,
+          id: id
+        });
+      } else {
+        Page.findById(id, function(err, page) {
+          if (err) return console.log(err);
+
+          (page.title = title),
+            (page.slug = slug),
+            (page.content = content),
+            page.save(function(err) {
+              if (err) return console.log(err);
+              req.flash("success", "Page edited!");
+              res.redirect("/admin/pages/edit-page/" + page.slug);
+            });
         });
       }
     });
