@@ -1,0 +1,48 @@
+<% include adminheader %> <% include navadmin %>
+
+<body>
+  <main role="main" class="container">
+    <div class="starter-template">
+      <h2 class="page-title"> Categories</h2>
+      <a href="/admin/categories/add-category" class="btn btn-primary">Add a New Category</a>
+      <br><br>
+      <table class="table table-striped sorting">
+        <thead>
+          <tr>
+            Category
+          </tr>
+          <tr>
+            Edit
+          </tr>
+          <tr>
+            Delete
+          </tr>
+        </thead>
+        <tbody>
+          <% categories.forEach(function (cat){ %>
+          <tr>
+            <td>
+              <%= cat.title %>
+            </td>
+            <td>
+              <a href="/admin/categories/edit-category/<%= cat.slug %>">Edit</a>
+            </td>
+       
+            <td>
+              <a href="/admin/categories/delete-category/<%= cat._id %>"
+                class="confirmDeletion">Delete<a
+              >
+            </td>
+      
+          </tr>
+          <%});%>
+        </tbody>
+      </table>
+      
+    </div>
+  </main>
+  <!-- /.container -->
+</body>
+
+
+<% include adminfooter %>

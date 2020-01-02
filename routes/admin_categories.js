@@ -8,6 +8,7 @@ router.get("/", (req, res) => {
   Category.find(function(err, categories) {
     if (err) return console.log(err);
     res.render("admin/categories", {
+      title: "Admin Categories",
       categories: categories
     });
   });
