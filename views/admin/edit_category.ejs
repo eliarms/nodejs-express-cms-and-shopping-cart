@@ -1,0 +1,26 @@
+<% include adminheader %> <% include navadmin %>
+
+<body>
+  <main role="main" class="container">
+    <div class="starter-template">
+      <h1>Edit Category</h1>
+
+      <form method="POST" action="/admin/categories/edit-category/<%= id %>">
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input
+            type="text"
+            class="form-control"
+            name="title"
+            value="<%= title %>"
+            placeholder="title"
+          />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </main>
+  <!-- /.container -->
+</body>
+<% include adminfooter %>
