@@ -3,6 +3,7 @@ var path = require("path");
 var mongoose = require("mongoose");
 var pages = require("./routes/pages");
 var adminPages = require("./routes/admin_pages");
+var adminCategories = require("./routes/admin_categories");
 var bodyParser = require("body-parser");
 var session = require("express-session");
 var expressValidator = require("express-validator");
@@ -65,6 +66,7 @@ app.use(function(req, res, next) {
 
 app.use("/", pages);
 app.use("/admin/pages", adminPages);
+app.use("/admin/categories", adminCategories);
 //start the server
 var port = 3000;
 app.listen(port, () => {
