@@ -164,5 +164,15 @@ router.get("/edit-page/:slug", (req, res) => {
   });
 });
 
+/*
+ * GET delete page
+ */
+router.get("/delete-page/:id", (req, res) => {
+  Page.findByIdAndRemove(req.params.id, function(err) {
+    if (err) return console.log(err);
+    req.flash("success ", "Page Deleted!");
+    res.redirect("/admin/pages/");
+  });
+});
 //Exports route
 module.exports = router;
