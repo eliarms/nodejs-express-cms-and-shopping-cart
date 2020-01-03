@@ -5,7 +5,7 @@
     <div class="starter-template">
       <h1>Edit Page</h1>
 
-      <form method="POST" action="/admin/pages/edit-page/<%= slug %>">
+      <form method="POST" action="/admin/pages/edit-page/<%= id %>">
         <div class="form-group">
           <label for="title">Title</label>
           <input
@@ -40,7 +40,6 @@
 <%= content %> </textarea
           >
         </div>
-        <input type="hidden" name="id" value="<%= id %>" />
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
     </div>
