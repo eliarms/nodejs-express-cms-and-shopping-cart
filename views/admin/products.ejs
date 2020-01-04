@@ -1,0 +1,77 @@
+<% include adminheader %> <% include navadmin %>
+
+<body>
+  <main role="main" class="container">
+    <div class="starter-template">
+      <h1>Product List</h1>
+      <a href="/admin/pages/add-product" class="btn btn-primary">Add a New Product</a>
+      <% if (count>0) {%>
+    
+      <table class="table table-striped ">
+        <thead>
+          <tr class="home">
+          <th>Product</th>
+          <th>Price</th>
+          <th>Category</th>
+          <th>Product Image</th>
+          <th>Edit</th>
+          <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% products.forEach(function (product){ %>
+          <tr>
+            <td>
+              <%= product.title %>
+            </td>
+            <td>
+              <%= parseFloat(product.price).toFixed(2) %>
+            </td>
+            <td>
+              <%= product.category %>
+            </td>
+            <td>
+              <% if  (product.image =="") {%>
+                <img src="/images/default.png"/>
+                <% } else { %>
+                  <img src="/product_images/<=% product._id %>/<=% product._image %>"/>
+                <%}%>
+            </td>
+            <td>
+              <a href="/admin/products/edit-product/<%= product._id %>">Edit</a>
+            </td>
+        
+            <td>
+              <a href="/admin/products/delete-product/<%= product._id %>"
+                class="confirmDeletion">Delete<a
+              >
+            </td>
+          
+          </tr>
+         
+
+          <%});%>
+        </tbody>
+      </table>
+      <% } else { %>
+        <h3 class="text-center"> There are no Products</h3>
+        <%}%>
+      
+    </div>
+  </main>
+  <!-- /.container -->
+</body>
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+$('tbody').sortable(  {
+  items:"tr:not(.home)",
+  placeholder: "ui-state-highlight",
+  update: function(){
+    var ids = $('tbody').sortable("serialize");
+    var url ="/admin/pages/reorder-pages";
+    $.post(url,ids);
+  }
+});
+</script>
+<% include adminfooter %>

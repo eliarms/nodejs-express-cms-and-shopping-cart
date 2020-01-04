@@ -6,29 +6,35 @@ var resizeimg = require("resize-img");
 
 //Get Product model
 var { Product } = require("../models/product");
+//Get Category model
+var { Category } = require("../models/category");
 /*
- * GET pages index
+ * GET product index
  */
 router.get("/", (req, res) => {
-  Page.find({})
-    .sort({ sorting: 1 })
-    .exec(function(err, pages) {
-      res.render("admin/pages", {
-        title: "Welcome Admin",
-        pages: pages
-      });
+  let count = 0;
+  Product.count((err, c) => {
+    count = c;
+  });
+  Product.find(function (err, products) {
+
+    res.render("admin/products", {
+      title: "Admin | Product",
+      count: count,
+      products: products
     });
+  });
 });
 
 /*
- * GET add page
+ * GET add product
  */
 
-router.get("/add-page", (req, res) => {
+router.get("/add-product", (req, res) => {
   var title = "";
   var slug = "";
   var content = "";
-  res.render("admin/add_page", {
+  res.render("admin/add_product", {
     title: title,
     slug: slug,
     content: content
@@ -36,10 +42,10 @@ router.get("/add-page", (req, res) => {
 });
 
 /*
- * GET post page
+ * GET post product
  */
 
-router.post("/add-page", (req, res) => {
+router.post("/add-product", (req, res) => {
   req.checkBody("title", "Title must have a value").notEmpty();
   req.checkBody("content", "Content must have a value").notEmpty();
   var title = req.body.title;
@@ -50,32 +56,32 @@ router.post("/add-page", (req, res) => {
   var errors = req.validationErrors();
   if (errors) {
     //console.log("errors");
-    res.render("admin/add_page", {
+    res.render("admin/add_product", {
       errors: errors,
       title: title,
       slug: slug,
       content: content
     });
   } else {
-    Page.findOne({ slug: slug }, function(err, page) {
-      if (page) {
-        req.flash("danger", "Page slug exists, choose another");
-        res.render("admin/add_page", {
+    product.findOne({ slug: slug }, function (err, product) {
+      if (product) {
+        req.flash("danger", "product slug exists, choose another");
+        res.render("admin/add_product", {
           title: title,
           slug: slug,
           content: content
         });
       } else {
-        var page = new Page({
+        var product = new product({
           title: title,
           slug: slug,
           content: content,
           sorting: 100
         });
-        page.save(function(err) {
+        product.save(function (err) {
           if (err) return console.log(err);
-          req.flash("success", "Page added!");
-          res.redirect("/admin/pages");
+          req.flash("success", "product added!");
+          res.redirect("/admin/products");
         });
       }
     });
@@ -83,10 +89,10 @@ router.post("/add-page", (req, res) => {
 });
 
 /*
- * POST Edit page
+ * POST Edit product
  */
 
-router.post("/edit-page/:id", (req, res) => {
+router.post("/edit-product/:id", (req, res) => {
   req.checkBody("title", "Title must have a value").notEmpty();
   req.checkBody("content", "Content must have a value").notEmpty();
   var title = req.body.title;
@@ -98,7 +104,7 @@ router.post("/edit-page/:id", (req, res) => {
   var errors = req.validationErrors();
   if (errors) {
     //console.log("errors");
-    res.render("admin/edit_page", {
+    res.render("admin/edit_product", {
       errors: errors,
       title: title,
       slug: slug,
@@ -106,26 +112,26 @@ router.post("/edit-page/:id", (req, res) => {
       id: id
     });
   } else {
-    Page.findOne({ slug: slug, _id: { $ne: id } }, function(err, page) {
-      if (page) {
-        req.flash("danger", "Page slug exists, choose another");
-        res.render("admin/edit_page", {
+    product.findOne({ slug: slug, _id: { $ne: id } }, function (err, product) {
+      if (product) {
+        req.flash("danger", "product slug exists, choose another");
+        res.render("admin/edit_product", {
           title: title,
           slug: slug,
           content: content,
           id: id
         });
       } else {
-        Page.findById(id, function(err, page) {
+        product.findById(id, function (err, product) {
           if (err) return console.log(err);
 
-          (page.title = title),
-            (page.slug = slug),
-            (page.content = content),
-            page.save(function(err) {
+          (product.title = title),
+            (product.slug = slug),
+            (product.content = content),
+            product.save(function (err) {
               if (err) return console.log(err);
-              req.flash("success", "Page edited!");
-              res.redirect("/admin/pages/edit-page/" + id);
+              req.flash("success", "product edited!");
+              res.redirect("/admin/products/edit-product/" + id);
             });
         });
       }
@@ -134,52 +140,52 @@ router.post("/edit-page/:id", (req, res) => {
 });
 
 /*
- * post reorder pages
+ * post reorder products
  */
-//grab the id of the page and assign the count value to the sorting field
-router.post("/reorder-pages", (req, res) => {
+//grab the id of the product and assign the count value to the sorting field
+router.post("/reorder-products", (req, res) => {
   var ids = req.body["id[]"];
   var count = 0;
   for (var i = 0; i < ids.length; i++) {
     var id = ids[i];
     count++;
-    (function(count) {
-      Page.findById(id, function(err, page) {
-        page.sorting = count;
-        page.save(function(err) {
+    (function (count) {
+      product.findById(id, function (err, product) {
+        product.sorting = count;
+        product.save(function (err) {
           if (err) return console.log(err);
         });
       });
     })(count);
   }
 });
-//GET edit page
+//GET edit product
 
-router.get("/edit-page/:id", (req, res) => {
-  Page.findById(req.params.id, function(err, page) {
+router.get("/edit-product/:id", (req, res) => {
+  product.findById(req.params.id, function (err, product) {
     if (err) return console.log(err);
 
-    res.render("admin/edit_page", {
-      title: page.title,
-      slug: page.slug,
-      content: page.content,
-      id: page._id
+    res.render("admin/edit_product", {
+      title: product.title,
+      slug: product.slug,
+      content: product.content,
+      id: product._id
     });
   });
 });
 
 /*
- * GET delete page
+ * GET delete product
  */
-router.get("/delete-page/:id", (req, res) => {
-  Page.findByIdAndRemove(parseInt(req.params.id), function(err) {
+router.get("/delete-product/:id", (req, res) => {
+  product.findByIdAndRemove(parseInt(req.params.id), function (err) {
     if (err) {
       req.flash("danger ", "Oops An Error occured!");
-      res.redirect("/admin/pages/");
+      res.redirect("/admin/products/");
       return console.log(err);
     }
-    req.flash("success ", "Page Deleted!");
-    res.redirect("/admin/pages/");
+    req.flash("success ", "product Deleted!");
+    res.redirect("/admin/products/");
   });
 });
 //Exports route

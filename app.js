@@ -25,7 +25,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.locals.errors = null;
 
 //Express fileUpload middleware
-app.use(fileUpload);
+app.use(fileUpload());
 //body parser middleware
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -45,7 +45,7 @@ app.use(
 //Express Validator midlleware
 app.use(
   expressValidator({
-    errorFormatter: function(param, msg, value) {
+    errorFormatter: function (param, msg, value) {
       var namespace = param.split("."),
         root = namespace.shift(),
         formParam = root;
@@ -64,7 +64,7 @@ app.use(
 
 // Epress messages
 app.use(require("connect-flash")());
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.locals.messages = require("express-messages")(req, res);
   next();
 });
