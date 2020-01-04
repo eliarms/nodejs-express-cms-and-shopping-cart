@@ -1,12 +1,15 @@
 var express = require("express");
 var path = require("path");
+const Joi = require("joi");
 var mongoose = require("mongoose");
 var pages = require("./routes/pages");
 var adminPages = require("./routes/admin_pages");
 var adminCategories = require("./routes/admin_categories");
+var adminProducts = require("./routes/admin_products");
 var bodyParser = require("body-parser");
 var session = require("express-session");
 var expressValidator = require("express-validator");
+var fileUpload = require("express-fileupload");
 var { mongoose } = require("./config/database");
 
 // Init app
@@ -21,6 +24,8 @@ app.use(express.static(path.join(__dirname, "public")));
 //set global error variable
 app.locals.errors = null;
 
+//Express fileUpload middleware
+app.use(fileUpload);
 //body parser middleware
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -67,8 +72,9 @@ app.use(function(req, res, next) {
 app.use("/", pages);
 app.use("/admin/pages", adminPages);
 app.use("/admin/categories", adminCategories);
+app.use("/admin/products", adminProducts);
 //start the server
-var port = 3000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log("server is up on port 3000");
 });

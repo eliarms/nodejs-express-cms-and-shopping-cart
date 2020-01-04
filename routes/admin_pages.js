@@ -168,8 +168,12 @@ router.get("/edit-page/:id", (req, res) => {
  * GET delete page
  */
 router.get("/delete-page/:id", (req, res) => {
-  Page.findByIdAndRemove(req.params.id, function(err) {
-    if (err) return console.log(err);
+  Page.findByIdAndRemove(parseInt(req.params.id), function(err) {
+    if (err) {
+      req.flash("danger ", "Oops An Error occured!");
+      res.redirect("/admin/pages/");
+      return console.log(err);
+    }
     req.flash("success ", "Page Deleted!");
     res.redirect("/admin/pages/");
   });
