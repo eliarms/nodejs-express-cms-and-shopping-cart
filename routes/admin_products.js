@@ -32,13 +32,17 @@ router.get("/", (req, res) => {
 
 router.get("/add-product", (req, res) => {
   var title = "";
-  var slug = "";
-  var content = "";
-  res.render("admin/add_product", {
-    title: title,
-    slug: slug,
-    content: content
-  });
+  var desc = "";
+  var price = "";
+  Category.find(function (err, categories) {
+    res.render("admin/add_product", {
+      title: title,
+      desc: desc,
+      price: price,
+      categories: categories
+    });
+  })
+
 });
 
 /*
