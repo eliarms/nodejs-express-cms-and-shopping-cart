@@ -134,6 +134,46 @@ router.post('/add-product', function (req, res) {
 
 });
 
+//GET edit product
+
+router.get("/edit-product/:id", (req, res) => {
+  var errors;
+  if (req.session.errors) {
+    errors = req.session.errors;
+    req.session.errors = null;
+  }
+  Category.find(function (err, categories) {
+
+    product.findById(req.params.id, function (err, product) {
+      if (err) {
+        console.log(err);
+        res.redirect('/admin/products');
+      } else {
+        var galleryDir = 'public/product_images/' + product._id + '/gallery';
+        var galleryImages = null;
+        fs.readdirSync(galleryDir, function (err, files) {
+          if (err) {
+            console.log(err);
+          }
+          else {
+            galleryImages = files;
+            res.render('admin/edit_product', {
+              title: product.title,
+              desc: product.desc,
+              categories: product.categories,
+              category: product.category.replace(/\s+/g, '-').toLowerCase();
+              price: product.price,
+              galleryImages: galleryImages,
+              id: product._id
+            });
+          }
+
+        });
+      }
+    });
+  });
+});
+
 /*
  * POST Edit product
  */
@@ -185,40 +225,8 @@ router.post("/edit-product/:id", (req, res) => {
   }
 });
 
-/*
- * post reorder products
- */
-//grab the id of the product and assign the count value to the sorting field
-router.post("/reorder-products", (req, res) => {
-  var ids = req.body["id[]"];
-  var count = 0;
-  for (var i = 0; i < ids.length; i++) {
-    var id = ids[i];
-    count++;
-    (function (count) {
-      product.findById(id, function (err, product) {
-        product.sorting = count;
-        product.save(function (err) {
-          if (err) return console.log(err);
-        });
-      });
-    })(count);
-  }
-});
-//GET edit product
 
-router.get("/edit-product/:id", (req, res) => {
-  product.findById(req.params.id, function (err, product) {
-    if (err) return console.log(err);
 
-    res.render("admin/edit_product", {
-      title: product.title,
-      slug: product.slug,
-      content: product.content,
-      id: product._id
-    });
-  });
-});
 
 /*
  * GET delete product
