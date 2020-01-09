@@ -144,14 +144,14 @@ router.get("/edit-product/:id", (req, res) => {
   }
   Category.find(function (err, categories) {
 
-    product.findById(req.params.id, function (err, product) {
+    Product.findById(req.params.id, function (err, product) {
       if (err) {
         console.log(err);
         res.redirect('/admin/products');
       } else {
         var galleryDir = 'public/product_images/' + product._id + '/gallery';
         var galleryImages = null;
-        fs.readdirSync(galleryDir, function (err, files) {
+        fs.readdir(galleryDir, function (err, files) {
           if (err) {
             console.log(err);
           }
@@ -160,9 +160,10 @@ router.get("/edit-product/:id", (req, res) => {
             res.render('admin/edit_product', {
               title: product.title,
               desc: product.desc,
-              categories: product.categories,
-              category: product.category.replace(/\s+/g, '-').toLowerCase();
+              categories: categories,
+              category: product.category.replace(/\s+/g, '-').toLowerCase(),
               price: product.price,
+              image: product.image,
               galleryImages: galleryImages,
               id: product._id
             });
